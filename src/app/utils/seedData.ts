@@ -1,0 +1,122 @@
+import { Property } from '../context/PropertyContext';
+
+export const defaultProperties: Omit<Property, 'id' | 'createdAt'>[] = [
+  {
+    title: 'Cobertura Duplex com Vista Panorâmica',
+    price: 'R$ 2.450.000',
+    priceDetail: 'ou R$ 12.500/mês',
+    location: 'Jardins, São Paulo - SP',
+    bedrooms: 4,
+    bathrooms: 3,
+    area: 280,
+    parking: 3,
+    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
+    badge: 'Destaque',
+    description: 'Cobertura duplex excepcional com acabamento de luxo, vista panorâmica da cidade, terraço gourmet completo e 4 suítes. Localização privilegiada nos Jardins.',
+    features: ['Terraço Gourmet', 'Vista Panorâmica', '4 Suítes', 'Piscina Privativa', 'Home Theater', 'Segurança 24h'],
+    gallery: [
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=600&fit=crop'
+    ],
+    type: 'Cobertura',
+    status: 'Venda',
+  },
+  {
+    title: 'Apartamento Moderno em Condomínio Clube',
+    price: 'R$ 890.000',
+    location: 'Vila Mariana, São Paulo - SP',
+    bedrooms: 3,
+    bathrooms: 2,
+    area: 125,
+    parking: 2,
+    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop',
+    description: 'Apartamento moderno em condomínio clube com infraestrutura completa. 3 dormitórios sendo 1 suíte, living ampliado e 2 vagas.',
+    features: ['Academia', 'Piscina', 'Salão de Festas', 'Playground', 'Varanda Gourmet', 'Portaria 24h'],
+    gallery: [
+      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop'
+    ],
+    type: 'Apartamento',
+    status: 'Venda',
+  },
+  {
+    title: 'Casa em Condomínio Fechado de Alto Padrão',
+    price: 'R$ 3.200.000',
+    location: 'Alphaville, Barueri - SP',
+    bedrooms: 5,
+    bathrooms: 4,
+    area: 450,
+    parking: 4,
+    image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&h=600&fit=crop',
+    badge: 'Lançamento',
+    description: 'Casa de alto padrão em condomínio fechado, 5 suítes, piscina, área gourmet completa, jardim e segurança total.',
+    features: ['Piscina Aquecida', 'Área Gourmet', 'Jardim Paisagístico', '5 Suítes', 'Home Office', 'Spa'],
+    gallery: [
+      'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&h=600&fit=crop'
+    ],
+    type: 'Casa',
+    status: 'Venda',
+  },
+  {
+    title: 'Loft Contemporâneo em Pinheiros',
+    price: 'R$ 650.000',
+    location: 'Pinheiros, São Paulo - SP',
+    bedrooms: 1,
+    bathrooms: 1,
+    area: 75,
+    parking: 1,
+    image: 'https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=800&h=600&fit=crop',
+    description: 'Loft moderno com pé direito alto, planta aberta, acabamento premium. Localização privilegiada em Pinheiros.',
+    features: ['Pé Direito Alto', 'Planta Aberta', 'Mobiliado', 'Portaria 24h', 'Lazer Completo'],
+    gallery: [
+      'https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&h=600&fit=crop'
+    ],
+    type: 'Loft',
+    status: 'Venda',
+  },
+  {
+    title: 'Apartamento Compacto e Moderno',
+    price: 'R$ 2.800',
+    priceDetail: 'por mês',
+    location: 'Moema, São Paulo - SP',
+    bedrooms: 2,
+    bathrooms: 1,
+    area: 65,
+    parking: 1,
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop',
+    description: 'Apartamento compacto, perfeito para jovens casais ou solteiros. Localização central em Moema.',
+    features: ['Mobiliado', 'Academia', 'Próximo ao Metrô', 'Portaria 24h'],
+    gallery: [
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop'
+    ],
+    type: 'Apartamento',
+    status: 'Locação',
+  },
+  {
+    title: 'Penthouse de Luxo com Rooftop',
+    price: 'R$ 4.800.000',
+    location: 'Itaim Bibi, São Paulo - SP',
+    bedrooms: 4,
+    bathrooms: 5,
+    area: 380,
+    parking: 5,
+    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
+    badge: 'Exclusivo',
+    description: 'Penthouse exclusiva com rooftop privativo, piscina, sauna e acabamento impecável. O ápice do luxo.',
+    features: ['Rooftop Privativo', 'Piscina Infinita', 'Sauna', 'Wine Cellar', 'Automação Completa', 'Elevador Privativo'],
+    gallery: [
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=800&h=600&fit=crop'
+    ],
+    type: 'Penthouse',
+    status: 'Venda',
+  }
+];

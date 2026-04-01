@@ -1,0 +1,57 @@
+5
+❌ [Supabase] Memory limit exceeded
+❌ [Supabase] ❌ Error fetching properties: Error: canceling statement due to statement timeout
+    at Module.getByPrefix (file:///var/tmp/sb-compile-edge-runtime/source/kv_store.tsx:71:11)
+    at eventLoopTick (ext:core/01_core.js:175:7)
+    at async file:///var/tmp/sb-compile-edge-runtime/source/index.tsx:75:24
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async cors2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/cors/index.js:82:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async logger2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/logger/index.js:38:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/hono-base.js:301:25
+    at async mapped (ext:runtime/http.js:246:20)
+❌ [Supabase] Stack: Error: canceling statement due to statement timeout
+    at Module.getByPrefix (file:///var/tmp/sb-compile-edge-runtime/source/kv_store.tsx:71:11)
+    at eventLoopTick (ext:core/01_core.js:175:7)
+    at async file:///var/tmp/sb-compile-edge-runtime/source/index.tsx:75:24
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async cors2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/cors/index.js:82:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async logger2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/logger/index.js:38:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/hono-base.js:301:25
+    at async mapped (ext:runtime/http.js:246:20)
+❌ [Supabase] ❌ Error fetching properties: Error: canceling statement due to statement timeout
+    at Module.getByPrefix (file:///var/tmp/sb-compile-edge-runtime/source/kv_store.tsx:71:11)
+    at eventLoopTick (ext:core/01_core.js:175:7)
+    at async file:///var/tmp/sb-compile-edge-runtime/source/index.tsx:75:24
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async cors2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/cors/index.js:82:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async logger2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/logger/index.js:38:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/hono-base.js:301:25
+    at async mapped (ext:runtime/http.js:246:20)
+❌ [Supabase] Stack: Error: canceling statement due to statement timeout
+    at Module.getByPrefix (file:///var/tmp/sb-compile-edge-runtime/source/kv_store.tsx:71:11)
+    at eventLoopTick (ext:core/01_core.js:175:7)
+    at async file:///var/tmp/sb-compile-edge-runtime/source/index.tsx:75:24
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async cors2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/cors/index.js:82:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async logger2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/logger/index.js:38:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/hono-base.js:301:25
+    at async mapped (ext:runtime/http.js:246:20)
+❌ [Supabase] ❌ Error fetching properties: Error: canceling statement due to statement timeout
+    at Module.getByPrefix (file:///var/tmp/sb-compile-edge-runtime/source/kv_store.tsx:71:11)
+    at eventLoopTick (ext:core/01_core.js:175:7)
+    at async file:///var/tmp/sb-compile-edge-runtime/source/index.tsx:75:24
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async cors2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/cors/index.js:82:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async logger2 (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/middleware/logger/index.js:38:5)
+    at async dispatch (file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/compose.js:22:17)
+    at async file:///var/tmp/sb-compile-edge-runtime/node_modules/localhost/hono/4.12.9/dist/hono-base.js:301:25
+    at async mapped (ext:runtime/http.js:246:20)
