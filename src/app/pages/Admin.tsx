@@ -2,11 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import { useProperties } from '../context/PropertyContext';
+import type { Property } from '../context/PropertyContext';
 import { Plus, LogOut, Home, Edit, Trash2, Eye } from 'lucide-react';
 import { PropertyForm } from '../components/admin/PropertyForm';
-import { BackendStatus } from '../components/admin/BackendStatus';
-import type { Property } from '../context/PropertyContext';
-import { projectId } from '/utils/supabase/info';
 
 export default function Admin() {
   const { isAuthenticated, logout, user } = useAuth();
@@ -110,72 +108,6 @@ export default function Admin() {
             </div>
             <div className="text-4xl font-bold text-[#028174]">
               {properties.filter((p) => p.status === 'Locação').length}
-            </div>
-          </div>
-        </div>
-
-        {/* Backend Status */}
-        <BackendStatus />
-
-        {/* Debug Info */}
-        <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-6">
-          <div className="flex items-start gap-3">
-            <div className="text-2xl">🔍</div>
-            <div className="flex-1">
-              <div className="font-bold text-blue-900 mb-2">Debug - Estado de Autenticação</div>
-              <div className="space-y-1 text-sm text-blue-800">
-                <div>✅ Autenticado: <strong>{isAuthenticated ? 'Sim' : 'Não'}</strong></div>
-                <div>👤 Usuário: <strong>{user?.email || 'N/A'}</strong></div>
-                <div>🎟️ Token no localStorage: <strong>{localStorage.getItem('auth_token') ? 'Presente' : 'AUSENTE'}</strong></div>
-              </div>
-              {!isAuthenticated || !localStorage.getItem('auth_token') ? (
-                <div className="mt-3 p-3 bg-red-100 border-2 border-red-300 rounded-lg">
-                  <div className="font-bold text-red-900 mb-1 text-sm">🚨 ERRO CRÍTICO DETECTADO</div>
-                  <div className="text-xs text-red-800 mb-3">
-                    Você NÃO está autenticado. Por isso está dando "Failed to add". Use o botão abaixo para corrigir AGORA:
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        logout();
-                        navigate('/admin/login');
-                      }}
-                      className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 transition-colors"
-                    >
-                      🔐 Fazer Login AGORA
-                    </button>
-                    <button
-                      onClick={() => {
-                        console.log('=== DETALHES DO ERRO ===');
-                        console.log('isAuthenticated:', isAuthenticated);
-                        console.log('user:', user);
-                        console.log('auth_token:', localStorage.getItem('auth_token'));
-                        console.log('API_URL:', `https://${projectId}.supabase.co/functions/v1/make-server-9a04a9a2`);
-                        alert('✅ Logs enviados para console. Pressione F12 para ver.');
-                      }}
-                      className="px-4 py-2 bg-red-800 text-white rounded-lg text-xs font-semibold hover:bg-red-900 transition-colors"
-                    >
-                      Ver Logs
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-3 p-3 bg-green-100 border-2 border-green-300 rounded-lg">
-                  <div className="font-bold text-green-900 text-sm">✅ Tudo OK! Você pode adicionar imóveis.</div>
-                </div>
-              )}
-              <button
-                onClick={() => {
-                  console.log('=== DEBUG INFO ===');
-                  console.log('isAuthenticated:', isAuthenticated);
-                  console.log('user:', user);
-                  console.log('auth_token:', localStorage.getItem('auth_token'));
-                  alert('Informações de debug enviadas para o console (F12)');
-                }}
-                className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors"
-              >
-                Ver detalhes no Console
-              </button>
             </div>
           </div>
         </div>
