@@ -17,9 +17,20 @@ export function Hero() {
   };
 
   return (
-    <section className="relative pt-44 pb-32 bg-gradient-to-br from-white via-[#F0F7F6] to-[#E8F8F6] overflow-hidden">
+    <section className="relative pt-44 pb-32 overflow-hidden bg-black/5">
+      {/* Background Video */}
+      <video 
+        autoPlay 
+        loop 
+        muted 
+        playsInline 
+        className="absolute inset-0 w-full h-full object-cover opacity-[0.15] -z-10"
+      >
+        <source src="https://fotos.sobressai.com.br/Fotos/Videos/2318.mp4" type="video/mp4" />
+      </video>
+
       {/* Decorative Elements */}
-      <div className="absolute inset-0 opacity-[0.03]">
+      <div className="absolute inset-0 opacity-[0.03] -z-10">
         <div className="absolute top-20 right-0 w-[700px] h-[700px] rounded-full bg-[#00A896] blur-[150px]"></div>
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full bg-[#028174] blur-[120px]"></div>
       </div>

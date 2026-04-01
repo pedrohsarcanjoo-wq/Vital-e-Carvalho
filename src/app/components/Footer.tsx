@@ -31,12 +31,6 @@ export function Footer() {
               >
                 <Instagram size={18} />
               </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-[rgba(255,255,255,0.1)] hover:bg-[#00A896] flex items-center justify-center transition-all duration-300 hover:scale-110"
-              >
-                <Linkedin size={18} />
-              </a>
             </div>
           </div>
 
@@ -148,7 +142,9 @@ export function Footer() {
         {/* Developer Credit */}
         <div className="mt-6 pt-6 border-t border-[rgba(255,255,255,0.05)] flex items-center justify-center gap-2">
           <span className="text-xs text-[rgba(255,255,255,0.3)] font-light">Desenvolvido por</span>
-          <img src={logoDev} alt="Developer Logo" className="h-[20px] w-auto opacity-50 hover:opacity-100 transition-opacity mix-blend-screen" />
+          <a href="https://www.instagram.com/axiagrowth_/" target="_blank" rel="noopener noreferrer">
+            <img src={logoDev} alt="Developer Logo" className="h-[20px] w-auto opacity-50 hover:opacity-100 transition-opacity mix-blend-screen hover:scale-105" />
+          </a>
         </div>
       </div>
     </footer>

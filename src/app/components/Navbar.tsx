@@ -7,10 +7,10 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b-2 border-[#E0E8E7] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
       <div className="max-w-[1400px] mx-auto px-6">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-24">
           {/* Logo */}
-          <div className="flex items-center">
-            <img src={logo} alt="Vita & Carvalho" className="h-14 w-auto" />
+           <div className="flex items-center">
+            <img src={logo} alt="Vita & Carvalho" className="h-20 w-auto" />
           </div>
 
           {/* Desktop Navigation */}
