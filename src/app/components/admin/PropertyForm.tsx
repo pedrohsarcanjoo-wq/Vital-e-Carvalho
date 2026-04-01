@@ -8,7 +8,7 @@ interface PropertyFormProps {
 }
 
 export function PropertyForm({ property, onClose }: PropertyFormProps) {
-  const { addProperty, updateProperty } = useProperties();
+  const { addProperty, updateProperty, uploadImage } = useProperties();
   const [formData, setFormData] = useState({
     title: '',
     code: '',
@@ -27,6 +27,8 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
   });
   const [features, setFeatures] = useState<string[]>([]);
   const [gallery, setGallery] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [newFeature, setNewFeature] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -66,10 +68,32 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
         throw new Error('Você precisa estar autenticado para adicionar imóveis. Por favor, faça login novamente.');
       }
 
+      // Upload da imagem principal se houver um novo arquivo
+      let finalImageUrl = formData.image;
+      if (imageFile) {
+        console.log('📤 Fazendo upload da imagem principal...');
+        finalImageUrl = await uploadImage(imageFile);
+      }
+
+      // Upload das novas imagens da galeria
+      let finalGalleryUrls = [...gallery];
+      // Remover as strings base64 temporárias da galeria (pois elas vieram dos arquivos)
+      // Mantemos apenas imagens que já eram URLs
+      finalGalleryUrls = finalGalleryUrls.filter(url => !url.startsWith('data:image'));
+      
+      if (galleryFiles.length > 0) {
+        console.log(`📤 Fazendo upload de ${galleryFiles.length} imagens da galeria...`);
+        const newGalleryUrls = await Promise.all(
+          galleryFiles.map(file => uploadImage(file))
+        );
+        finalGalleryUrls = [...finalGalleryUrls, ...newGalleryUrls];
+      }
+
       const propertyData = {
         ...formData,
+        image: finalImageUrl,
         features,
-        gallery: gallery.length > 0 ? gallery : [formData.image],
+        gallery: finalGalleryUrls.length > 0 ? finalGalleryUrls : [finalImageUrl],
       };
 
       console.log('📝 Submetendo imóvel:', propertyData.title);
@@ -123,6 +147,7 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData({ ...formData, image: reader.result as string });
@@ -134,7 +159,9 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
   const handleGalleryUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      Array.from(files).forEach((file) => {
+      const newFilesArray = Array.from(files);
+      setGalleryFiles(prev => [...prev, ...newFilesArray]);
+      newFilesArray.forEach((file) => {
         const reader = new FileReader();
         reader.onloadend = () => {
           setGallery((prev) => [...prev, reader.result as string]);

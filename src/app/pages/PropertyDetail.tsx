@@ -6,9 +6,17 @@ import { useState } from 'react';
 export default function PropertyDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getPropertyById } = useProperties();
-  const property = getPropertyById(id || '');
+  const { properties, loading } = useProperties();
+  const property = properties.find(p => p.id === id) || properties.find(p => p.code === id);
   const [selectedImage, setSelectedImage] = useState(0);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#00A896] border-t-transparent"></div>
+      </div>
+    );
+  }
 
   if (!property) {
     return (
@@ -86,7 +94,7 @@ export default function PropertyDetail() {
             {/* Thumbnail Gallery */}
             <div className="bg-[#1C1C1C] p-6">
               <div className="flex gap-4 overflow-x-auto">
-                {property.gallery.map((img, idx) => (
+                {(Array.isArray(property.gallery) ? property.gallery : property.gallery ? [property.gallery] : []).map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
@@ -96,7 +104,7 @@ export default function PropertyDetail() {
                         : 'border-transparent opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt={`${property.title} - ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img src={img as string} alt={`${property.title} - ${idx + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -176,13 +184,13 @@ export default function PropertyDetail() {
                     Características
                   </h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {property.features.map((feature, idx) => (
+                    {(Array.isArray(property.features) ? property.features : property.features ? [property.features] : []).map((feature, idx) => (
                       <div
                         key={idx}
                         className="flex items-center gap-3 bg-gradient-to-br from-[#F0F7F6] to-white border-2 border-[#E0E8E7] rounded-xl p-4 hover:border-[#00A896] transition-colors"
                       >
                         <div className="w-2 h-2 rounded-full bg-[#00A896]"></div>
-                        <span className="text-[#2C2C2C] font-medium">{feature}</span>
+                        <span className="text-[#2C2C2C] font-medium">{feature as string}</span>
                       </div>
                     ))}
                   </div>

@@ -1,7 +1,6 @@
 import { Menu, Phone, X } from 'lucide-react';
 import { useState } from 'react';
-const logo = 'https://via.placeholder.com/150x50?text=Logo';
-
+import logo from '../../assets/logo-navbar.png';
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

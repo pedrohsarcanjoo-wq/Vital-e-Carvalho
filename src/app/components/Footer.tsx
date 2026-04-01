@@ -1,7 +1,6 @@
-const image_ff6b80e0792c7ece27c068541dcba948f5677345 = 'https://via.placeholder.com/150x50?text=Vita&Carvalho';
 import { MapPin, Phone, Mail, Facebook, Instagram, Linkedin } from 'lucide-react';
-const logo = 'https://via.placeholder.com/150x50?text=Logo';
-const devLogo = 'https://via.placeholder.com/100x20?text=Dev';
+import logoFooter from '../../assets/logo-footer.png';
+import logoDev from '../../assets/logo-dev.png';
 
 export function Footer() {
   return (
@@ -11,7 +10,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Company Info */}
           <div>
-            <img src={image_ff6b80e0792c7ece27c068541dcba948f5677345} alt="Vita & Carvalho" className="h-12 w-auto mb-6" />
+            <img src={logoFooter} alt="Vita & Carvalho" className="h-14 w-auto mb-6" />
             <p className="text-[rgba(255,255,255,0.6)] text-sm leading-relaxed mb-6 font-light">
               Excelência em soluções imobiliárias há mais de 15 anos. Transformando sonhos em realidade.
             </p>
@@ -149,7 +148,7 @@ export function Footer() {
         {/* Developer Credit */}
         <div className="mt-6 pt-6 border-t border-[rgba(255,255,255,0.05)] flex items-center justify-center gap-2">
           <span className="text-xs text-[rgba(255,255,255,0.3)] font-light">Desenvolvido por</span>
-          <img src={devLogo} alt="Developer Logo" className="h-5 w-auto opacity-50 hover:opacity-100 transition-opacity" />
+          <img src={logoDev} alt="Developer Logo" className="h-[20px] w-auto opacity-50 hover:opacity-100 transition-opacity mix-blend-screen" />
         </div>
       </div>
     </footer>

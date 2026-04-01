@@ -155,27 +155,27 @@ export async function checkBackendHealth() {
  * Faz upload de imagem convertendo File para base64
  */
 export async function uploadImage(file: File): Promise<string> {
-  // Converter para base64
-  const base64 = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const headers = getAuthHeaders();
+  // We need to remove Content-Type so the browser sets the correct boundary for multipart/form-data
+  delete (headers as Record<string, string>)['Content-Type'];
+
+  const response = await fetch(`${API_URL}/upload`, {
+    method: 'POST',
+    headers,
+    body: formData,
   });
   
-  // Fazer upload
-  const response = await apiPost<{ url: string; path: string; bucket: string }>(
-    '/upload',
-    {
-      image: base64,
-      fileName: file.name,
-    },
-    false
-  );
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Upload failed' }));
+    throw new Error(error.error || `HTTP ${response.status}`);
+  }
   
-  console.log('✅ Imagem enviada:', response.path);
-  
-  return response.url;
+  const data = await response.json();
+  console.log('✅ Imagem enviada:', data.fileName);
+  return data.url;
 }
 
 /**
