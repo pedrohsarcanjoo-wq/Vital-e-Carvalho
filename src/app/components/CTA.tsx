@@ -39,7 +39,7 @@ export function CTA() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-5 justify-center mb-12">
             <a
-              href="https://wa.me/5511942113331"
+              href="https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 bg-gradient-to-br from-[#00A896] to-[#028174] text-white px-10 py-5 rounded-xl font-semibold text-sm tracking-wide hover:shadow-[0_12px_48px_rgba(0,168,150,0.4)] hover:-translate-y-1 transition-all duration-300"
@@ -48,11 +48,11 @@ export function CTA() {
               WhatsApp
             </a>
             <a
-              href="tel:+5511942113331"
+              href="tel:+5511941286418"
               className="inline-flex items-center justify-center gap-3 border-2 border-[#00A896] text-[#00A896] bg-transparent px-10 py-5 rounded-xl font-semibold text-sm tracking-wide hover:bg-[#00A896] hover:text-white transition-all duration-300"
             >
               <Phone size={22} strokeWidth={2} />
-              (11) 94211-3331
+              (11) 94128-6418
             </a>
           </div>
 

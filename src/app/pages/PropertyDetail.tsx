@@ -38,7 +38,7 @@ export default function PropertyDetail() {
   }
 
   const whatsappMessage = `Olá! Tenho interesse no imóvel: ${property.title} - ${property.location}. Gostaria de mais informações.`;
-  const whatsappUrl = `https://wa.me/5511942113331?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappUrl = `https://api.whatsapp.com/send/?phone=5511941286418&text=${encodeURIComponent(whatsappMessage)}&type=phone_number&app_absent=0&utm_source=ig`;
 
   return (
     <div className="min-h-screen bg-white">
@@ -221,7 +221,7 @@ export default function PropertyDetail() {
                     </a>
 
                     <a
-                      href="tel:+5511942113331"
+                      href="tel:+5511941286418"
                       className="w-full border-2 border-[#00A896] text-[#00A896] px-6 py-4 rounded-xl font-bold text-sm tracking-wide hover:bg-[#00A896] hover:text-white transition-all flex items-center justify-center gap-3"
                     >
                       Ligar Agora

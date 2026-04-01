@@ -1,19 +1,34 @@
 import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import { useProperties } from '../context/PropertyContext';
 
 export function Hero() {
   const navigate = useNavigate();
+  const { properties } = useProperties();
+  
   const [searchFilters, setSearchFilters] = useState({
-    type: 'Apartamento',
-    city: 'São Paulo',
-    price: 'Até R$ 300.000'
+    status: 'Todos',
+    type: 'Todos',
+    city: 'Todas as Regiões',
+    price: 'Todos'
   });
+
+  const uniqueCities = useMemo(() => {
+    if (!properties) return [];
+    const cities = new Set(properties.map(p => p.location));
+    return Array.from(cities).sort();
+  }, [properties]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Navigate to all properties page with filters
-    navigate('/imoveis');
+    const params = new URLSearchParams();
+    if (searchFilters.status !== 'Todos') params.append('status', searchFilters.status);
+    if (searchFilters.type !== 'Todos') params.append('type', searchFilters.type);
+    if (searchFilters.city !== 'Todas as Regiões') params.append('city', searchFilters.city);
+    if (searchFilters.price !== 'Todos') params.append('price', searchFilters.price);
+    
+    navigate(`/imoveis?${params.toString()}`);
   };
 
   return (
@@ -99,55 +114,72 @@ export function Hero() {
                 </div>
               </div>
               
-              <form onSubmit={handleSearch} className="space-y-5">
-                <div>
-                  <label className="block text-sm font-semibold text-[#2C2C2C] mb-2.5">Tipo de Imóvel</label>
-                  <select 
-                    value={searchFilters.type}
-                    onChange={(e) => setSearchFilters({...searchFilters, type: e.target.value})}
-                    className="w-full h-14 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
-                  >
-                    <option>Apartamento</option>
-                    <option>Casa</option>
-                    <option>Cobertura</option>
-                    <option>Loft</option>
-                    <option>Terreno</option>
-                  </select>
+              <form onSubmit={handleSearch} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Finalidade</label>
+                    <select 
+                      value={searchFilters.status}
+                      onChange={(e) => setSearchFilters({...searchFilters, status: e.target.value})}
+                      className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
+                    >
+                      <option value="Todos">Todas</option>
+                      <option value="Venda">Venda</option>
+                      <option value="Locação">Locação</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Tipo</label>
+                    <select 
+                      value={searchFilters.type}
+                      onChange={(e) => setSearchFilters({...searchFilters, type: e.target.value})}
+                      className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
+                    >
+                      <option value="Todos">Todos</option>
+                      <option value="Apartamento">Apartamento</option>
+                      <option value="Casa">Casa</option>
+                      <option value="Cobertura">Cobertura</option>
+                      <option value="Loft">Loft</option>
+                      <option value="Terreno">Terreno</option>
+                      <option value="Comercial">Comercial</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-[#2C2C2C] mb-2.5">Cidade</label>
+                  <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Região</label>
                   <select 
                     value={searchFilters.city}
                     onChange={(e) => setSearchFilters({...searchFilters, city: e.target.value})}
-                    className="w-full h-14 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
+                    className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
                   >
-                    <option>São Paulo</option>
-                    <option>Rio de Janeiro</option>
-                    <option>Belo Horizonte</option>
-                    <option>Curitiba</option>
-                    <option>Porto Alegre</option>
+                    <option value="Todas as Regiões">Todas as Regiões</option>
+                    {uniqueCities.map((city, idx) => (
+                      <option key={idx} value={city}>{city}</option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-[#2C2C2C] mb-2.5">Faixa de Preço</label>
+                  <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Faixa de Preço</label>
                   <select 
                     value={searchFilters.price}
                     onChange={(e) => setSearchFilters({...searchFilters, price: e.target.value})}
-                    className="w-full h-14 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
+                    className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
                   >
-                    <option>Até R$ 300.000</option>
-                    <option>R$ 300.000 - R$ 500.000</option>
-                    <option>R$ 500.000 - R$ 800.000</option>
-                    <option>R$ 800.000 - R$ 1.200.000</option>
-                    <option>Acima de R$ 1.200.000</option>
+                    <option value="Todos">Qualquer Valor</option>
+                    <option value="Até R$ 300.000">Até R$ 300.000</option>
+                    <option value="R$ 300.000 - R$ 500.000">R$ 300.000 - R$ 500.000</option>
+                    <option value="R$ 500.000 - R$ 800.000">R$ 500.000 - R$ 800.000</option>
+                    <option value="R$ 800.000 - R$ 1.200.000">R$ 800.000 - R$ 1.200.000</option>
+                    <option value="Acima de R$ 1.200.000">Acima de R$ 1.200.000</option>
                   </select>
                 </div>
 
                 <button 
                   type="submit"
-                  className="w-full h-14 bg-gradient-to-br from-[#00A896] to-[#028174] text-white rounded-xl font-bold text-sm tracking-wide hover:shadow-[0_12px_40px_rgba(0,168,150,0.35)] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2.5"
+                  className="w-full h-14 bg-gradient-to-br from-[#00A896] to-[#028174] text-white rounded-xl font-bold text-sm tracking-wide hover:shadow-[0_12px_40px_rgba(0,168,150,0.35)] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2.5 mt-2"
                 >
                   <Search size={20} />
                   Buscar Imóveis

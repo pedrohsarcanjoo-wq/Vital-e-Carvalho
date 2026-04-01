@@ -28,7 +28,7 @@ export function Navbar() {
               Depoimentos
             </a>
             <a 
-              href="https://wa.me/5511942113331"
+              href="https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gradient-to-br from-[#00A896] to-[#028174] text-white px-6 py-3 rounded-lg font-semibold text-sm tracking-wide hover:shadow-[0_8px_28px_rgba(0,168,150,0.3)] hover:-translate-y-0.5 transition-all duration-300"
@@ -63,8 +63,7 @@ export function Navbar() {
               <a href="#depoimentos" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
                 Depoimentos
               </a>
-              <a 
-                href="https://wa.me/5511942113331"
+              <a href="https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gradient-to-br from-[#00A896] to-[#028174] text-white px-6 py-3 rounded-lg font-semibold text-sm tracking-wide text-center mt-2"

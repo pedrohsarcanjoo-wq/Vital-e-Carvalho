@@ -5,7 +5,7 @@ export function ServiceCategories() {
     {
       icon: Store,
       title: 'Para Comércio',
-      description: 'A Imobiliária Vita e Morais trabalha com a venda e o aluguel de Imóveis para comércio, salas e pontos comerciais.'
+      description: 'A Imobiliária Vita & Carvalho trabalha com a venda e o aluguel de Imóveis para comércio, salas e pontos comerciais.'
     },
     {
       icon: Home,
@@ -73,7 +73,7 @@ export function ServiceCategories() {
 
               {/* CTA Button */}
               <a
-                href="https://wa.me/5511942113331"
+                href="https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-gradient-to-br from-[#00A896] to-[#028174] text-white px-6 py-3 rounded-lg font-semibold text-sm hover:shadow-[0_8px_24px_rgba(0,168,150,0.3)] hover:-translate-y-1 transition-all duration-300"
@@ -97,7 +97,7 @@ export function ServiceCategories() {
             Entre em contato conosco e descubra todas as soluções que temos para você
           </p>
           <a
-            href="https://wa.me/5511942113331"
+            href="https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block bg-gradient-to-br from-[#00A896] to-[#028174] text-white px-10 py-4 rounded-xl font-semibold text-sm tracking-wide hover:shadow-[0_12px_40px_rgba(0,168,150,0.35)] hover:-translate-y-1 transition-all duration-300"

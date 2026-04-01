@@ -2,14 +2,20 @@ import { useState, useMemo } from 'react';
 import { useProperties } from '../context/PropertyContext';
 import { PropertyCard } from '../components/PropertyCard';
 import { Search, SlidersHorizontal, Home as HomeIcon } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
 export default function AllProperties() {
   const { properties } = useProperties();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState('Todos');
-  const [statusFilter, setStatusFilter] = useState('Todos');
-  const [priceFilter, setPriceFilter] = useState('Todos');
+  const [typeFilter, setTypeFilter] = useState(searchParams.get('type') || 'Todos');
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'Todos');
+  // Tratar match de região no price para 'city' parameter if user customized filtering.
+  // Actually, wait, let's add a cityFilter because currently there is none!
+  const [cityFilter, setCityFilter] = useState(searchParams.get('city') || 'Todas as Regiões');
+  const [priceFilter, setPriceFilter] = useState(searchParams.get('price') || 'Todos');
 
   const filteredProperties = useMemo(() => {
     return properties.filter((property) => {
@@ -25,6 +31,9 @@ export default function AllProperties() {
 
       // Status filter
       const matchesStatus = statusFilter === 'Todos' || property.status === statusFilter;
+
+      // City filter
+      const matchesCity = cityFilter === 'Todas as Regiões' || property.location === cityFilter;
 
       // Price filter (basic implementation)
       let matchesPrice = true;
@@ -49,9 +58,16 @@ export default function AllProperties() {
         }
       }
 
-      return matchesSearch && matchesType && matchesStatus && matchesPrice;
+      return matchesSearch && matchesType && matchesStatus && matchesCity && matchesPrice;
     });
-  }, [properties, searchTerm, typeFilter, statusFilter, priceFilter]);
+  }, [properties, searchTerm, typeFilter, statusFilter, cityFilter, priceFilter]);
+
+  // Derive unique cities
+  const uniqueCities = useMemo(() => {
+    if (!properties) return [];
+    const cities = new Set(properties.map(p => p.location));
+    return Array.from(cities).sort();
+  }, [properties]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F0F7F6] to-white">
@@ -157,6 +173,23 @@ export default function AllProperties() {
                 <option>Todos</option>
                 <option>Venda</option>
                 <option>Locação</option>
+              </select>
+            </div>
+
+            {/* City Filter */}
+            <div>
+              <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">
+                Região
+              </label>
+              <select
+                value={cityFilter}
+                onChange={(e) => setCityFilter(e.target.value)}
+                className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
+              >
+                <option>Todas as Regiões</option>
+                {uniqueCities.map((city, idx) => (
+                  <option key={idx} value={city}>{city}</option>
+                ))}
               </select>
             </div>
 
