@@ -5,10 +5,14 @@ import { API_URL, getAuthToken, uploadImage as apiUploadImage } from '../utils/a
 export interface Property {
   id: string;
   code?: string;
+  code2?: string;
   title: string;
   price: string;
   priceDetail?: string;
   location: string;
+  city?: string;
+  state?: string;
+  neighborhood?: string;
   bedrooms: number;
   bathrooms: number;
   area: number;
@@ -19,7 +23,9 @@ export interface Property {
   features: string[];
   gallery: string[];
   type: string;
-  status: 'Venda' | 'Locação';
+  status: string | string[];
+  isActive?: boolean;
+  isFeatured?: boolean;
   createdAt: string;
 }
 

@@ -185,3 +185,65 @@ export async function deleteImage(path: string): Promise<void> {
   await apiDelete(`/upload/${path}`, false);
   console.log('🗑️ Imagem removida:', path);
 }
+
+// =================== LOCATIONS ===================
+
+export interface LocationCategory {
+  id: string;
+  type: 'city' | 'neighborhood';
+  name: string;
+  parentId?: string; // e.g. a neighborhood belongs to a city
+  createdAt: string;
+}
+
+export async function getLocations(): Promise<LocationCategory[]> {
+  const data = await apiGet<{ locations: LocationCategory[] }>('/locations');
+  return data.locations || [];
+}
+
+export async function addLocation(location: Omit<LocationCategory, 'id' | 'createdAt'>): Promise<LocationCategory> {
+  const data = await apiPost<{ location: LocationCategory }>('/locations', location, true);
+  return data.location;
+}
+
+export async function deleteLocation(id: string): Promise<void> {
+  await apiDelete(`/locations/${id}`, true);
+}
+
+// =================== POSTS (BLOG) ===================
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  author: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export async function getPosts(): Promise<BlogPost[]> {
+  const data = await apiGet<{ posts: BlogPost[] }>('/posts');
+  return data.posts || [];
+}
+
+export async function getPost(id: string): Promise<BlogPost> {
+  const data = await apiGet<{ post: BlogPost }>(`/posts/${id}`);
+  return data.post;
+}
+
+export async function addPost(post: Omit<BlogPost, 'id' | 'createdAt'>): Promise<BlogPost> {
+  const data = await apiPost<{ post: BlogPost }>('/posts', post, true);
+  return data.post;
+}
+
+export async function updatePost(id: string, post: Partial<BlogPost>): Promise<BlogPost> {
+  const data = await apiPut<{ post: BlogPost }>(`/posts/${id}`, post, true);
+  return data.post;
+}
+
+export async function deletePost(id: string): Promise<void> {
+  await apiDelete(`/posts/${id}`, true);
+}

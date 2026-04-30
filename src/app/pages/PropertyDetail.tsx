@@ -1,7 +1,8 @@
 import { useParams, Link, useNavigate } from 'react-router';
 import { useProperties } from '../context/PropertyContext';
 import { ArrowLeft, MapPin, Bed, Bath, Square, Car, Share2, Heart, MessageCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { PropertyCard } from '../components/PropertyCard';
 
 export default function PropertyDetail() {
   const { id } = useParams();
@@ -9,6 +10,13 @@ export default function PropertyDetail() {
   const { properties, loading } = useProperties();
   const property = properties.find(p => p.id === id) || properties.find(p => p.code === id);
   const [selectedImage, setSelectedImage] = useState(0);
+
+  const similarProperties = useMemo(() => {
+    if (!property) return [];
+    return properties
+      .filter((p) => p.id !== property.id && (p.type === property.type || p.location === property.location))
+      .slice(0, 3);
+  }, [property, properties]);
 
   if (loading) {
     return (
@@ -37,8 +45,7 @@ export default function PropertyDetail() {
     );
   }
 
-  const whatsappMessage = `Olá! Tenho interesse no imóvel: ${property.title} - ${property.location}. Gostaria de mais informações.`;
-  const whatsappUrl = `https://api.whatsapp.com/send/?phone=5511941286418&text=${encodeURIComponent(whatsappMessage)}&type=phone_number&app_absent=0&utm_source=ig`;
+  const whatsappUrl = `https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig`;
 
   return (
     <div className="min-h-screen bg-white">
@@ -78,11 +85,11 @@ export default function PropertyDetail() {
         <section className="bg-black">
           <div className="max-w-[1600px] mx-auto">
             {/* Main Image */}
-            <div className="relative h-[600px] overflow-hidden">
+            <div className="relative h-[600px] overflow-hidden flex items-center justify-center bg-[#0a0a0a]">
               <img
                 src={property.gallery[selectedImage] || property.image}
                 alt={property.title}
-                className="w-full h-full object-cover"
+                className="max-w-full max-h-full object-contain"
               />
               {property.badge && (
                 <div className="absolute top-8 left-8 bg-gradient-to-r from-[#00A896] to-[#028174] text-white px-6 py-2 rounded-full text-sm font-bold tracking-wider uppercase shadow-xl">
@@ -120,10 +127,12 @@ export default function PropertyDetail() {
               <div className="lg:col-span-2 space-y-10">
                 {/* Header */}
                 <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-sm font-bold text-[#00A896] uppercase tracking-wider px-4 py-1.5 bg-[rgba(0,168,150,0.1)] rounded-full">
-                      {property.status}
-                    </span>
+                  <div className="flex items-center gap-3 mb-4 flex-wrap">
+                    {(Array.isArray(property.status) ? property.status : property.status ? [property.status] : []).map((s, idx) => (
+                      <span key={idx} className="text-sm font-bold text-[#00A896] uppercase tracking-wider px-4 py-1.5 bg-[rgba(0,168,150,0.1)] rounded-full">
+                        {s}
+                      </span>
+                    ))}
                     <span className="text-sm font-semibold text-[#5A5754]">{property.type}</span>
                   </div>
                   
@@ -173,7 +182,7 @@ export default function PropertyDetail() {
                   <h2 className="font-['Poppins'] text-2xl font-bold text-[#2C2C2C] mb-4">
                     Sobre o Imóvel
                   </h2>
-                  <p className="text-[#5A5754] leading-relaxed text-lg font-light">
+                  <p className="text-[#5A5754] leading-relaxed text-lg font-light whitespace-pre-wrap">
                     {property.description}
                   </p>
                 </div>
@@ -228,9 +237,21 @@ export default function PropertyDetail() {
                     </a>
 
                     <div className="mt-8 pt-8 border-t-2 border-[#E0E8E7] space-y-3 text-sm text-[#5A5754]">
-                      <p className="font-light">
-                        <strong className="font-semibold text-[#2C2C2C]">Código:</strong> #{property.id}
-                      </p>
+                      {property.code && (
+                        <p className="font-light">
+                          <strong className="font-semibold text-[#2C2C2C]">Código:</strong> {property.code}
+                        </p>
+                      )}
+                      {property.code2 && (
+                        <p className="font-light">
+                          <strong className="font-semibold text-[#2C2C2C]">Código 2:</strong> {property.code2}
+                        </p>
+                      )}
+                      {!property.code && !property.code2 && (
+                        <p className="font-light">
+                          <strong className="font-semibold text-[#2C2C2C]">ID:</strong> #{property.id.slice(0,8)}
+                        </p>
+                      )}
                       <p className="font-light">
                         <strong className="font-semibold text-[#2C2C2C]">Publicado:</strong>{' '}
                         {new Date(property.createdAt).toLocaleDateString('pt-BR')}
@@ -242,6 +263,22 @@ export default function PropertyDetail() {
             </div>
           </div>
         </section>
+
+        {/* Similar Properties */}
+        {similarProperties.length > 0 && (
+          <section className="py-16 bg-[#F0F7F6]">
+            <div className="max-w-[1400px] mx-auto px-6">
+              <h2 className="font-['Poppins'] text-3xl font-bold text-[#2C2C2C] mb-8">
+                Imóveis Semelhantes
+              </h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {similarProperties.map(p => (
+                  <PropertyCard key={p.id} {...p} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

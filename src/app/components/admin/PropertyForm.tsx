@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useProperties, type Property } from '../../context/PropertyContext';
 import { X, Upload, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
+import { getLocations, LocationCategory } from '../../utils/api';
 
 interface PropertyFormProps {
   property: Property | null;
@@ -9,12 +10,17 @@ interface PropertyFormProps {
 
 export function PropertyForm({ property, onClose }: PropertyFormProps) {
   const { addProperty, updateProperty, uploadImage } = useProperties();
+  const [locations, setLocations] = useState<LocationCategory[]>([]);
+  
   const [formData, setFormData] = useState({
     title: '',
     code: '',
+    code2: '',
     price: '',
     priceDetail: '',
-    location: '',
+    state: 'SP',
+    city: '',
+    neighborhood: '',
     bedrooms: 1,
     bathrooms: 1,
     area: 50,
@@ -23,8 +29,10 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
     badge: '',
     description: '',
     type: 'Apartamento',
-    status: 'Venda' as 'Venda' | 'Locação',
   });
+  const [statusVenda, setStatusVenda] = useState(false);
+  const [statusLocacao, setStatusLocacao] = useState(false);
+  
   const [features, setFeatures] = useState<string[]>([]);
   const [gallery, setGallery] = useState<string[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -34,13 +42,20 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    getLocations().then(setLocations).catch(console.error);
+  }, []);
+
+  useEffect(() => {
     if (property) {
       setFormData({
         title: property.title,
         code: property.code || '',
+        code2: property.code2 || '',
         price: property.price,
         priceDetail: property.priceDetail || '',
-        location: property.location,
+        state: property.state || 'SP',
+        city: property.city || '',
+        neighborhood: property.neighborhood || '',
         bedrooms: property.bedrooms,
         bathrooms: property.bathrooms,
         area: property.area,
@@ -49,10 +64,16 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
         badge: property.badge || '',
         description: property.description,
         type: property.type,
-        status: property.status,
       });
+      
+      const statuses = Array.isArray(property.status) ? property.status : [property.status];
+      setStatusVenda(statuses.includes('Venda'));
+      setStatusLocacao(statuses.includes('Locação'));
+      
       setFeatures(property.features);
       setGallery(property.gallery);
+    } else {
+      setStatusVenda(true);
     }
   }, [property]);
 
@@ -61,42 +82,43 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
     setLoading(true);
     setError('');
     
+    if (!statusVenda && !statusLocacao) {
+      setError('Selecione pelo menos uma finalidade (Venda ou Locação)');
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Verificar se há token de autenticação
       const authToken = localStorage.getItem('auth_token');
       if (!authToken) {
         throw new Error('Você precisa estar autenticado para adicionar imóveis. Por favor, faça login novamente.');
       }
 
-      // Upload da imagem principal se houver um novo arquivo
       let finalImageUrl = formData.image;
       if (imageFile) {
-        console.log('📤 Fazendo upload da imagem principal...');
         finalImageUrl = await uploadImage(imageFile);
       }
 
-      // Upload das novas imagens da galeria
-      let finalGalleryUrls = [...gallery];
-      // Remover as strings base64 temporárias da galeria (pois elas vieram dos arquivos)
-      // Mantemos apenas imagens que já eram URLs
-      finalGalleryUrls = finalGalleryUrls.filter(url => !url.startsWith('data:image'));
-      
+      let finalGalleryUrls = [...gallery].filter(url => !url.startsWith('data:image'));
       if (galleryFiles.length > 0) {
-        console.log(`📤 Fazendo upload de ${galleryFiles.length} imagens da galeria...`);
-        const newGalleryUrls = await Promise.all(
-          galleryFiles.map(file => uploadImage(file))
-        );
+        const newGalleryUrls = await Promise.all(galleryFiles.map(file => uploadImage(file)));
         finalGalleryUrls = [...finalGalleryUrls, ...newGalleryUrls];
       }
 
+      const activeStatuses = [];
+      if (statusVenda) activeStatuses.push('Venda');
+      if (statusLocacao) activeStatuses.push('Locação');
+
+      const derivedLocation = `${formData.neighborhood}, ${formData.city} - ${formData.state}`;
+
       const propertyData = {
         ...formData,
+        location: derivedLocation,
+        status: activeStatuses,
         image: finalImageUrl,
         features,
         gallery: finalGalleryUrls.length > 0 ? finalGalleryUrls : [finalImageUrl],
       };
-
-      console.log('📝 Submetendo imóvel:', propertyData.title);
 
       if (property) {
         await updateProperty(property.id, propertyData);
@@ -106,14 +128,9 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
         alert('✅ Imóvel adicionado com sucesso!');
       }
       
-      console.log('✅ Imóvel salvo com sucesso!');
       onClose();
     } catch (err: any) {
-      console.error('❌ Erro ao salvar imóvel:', err);
-      
       let errorMessage = 'Erro desconhecido ao salvar imóvel';
-      
-      // Mensagens de erro mais específicas
       if (err.message.includes('Unauthorized') || err.message.includes('autenticado')) {
         errorMessage = '🔒 Sessão expirada ou inválida. Por favor, faça login novamente.';
       } else if (err.message.includes('Network') || err.message.includes('fetch')) {
@@ -121,7 +138,6 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
       setError(errorMessage);
       alert('❌ Erro: ' + errorMessage);
     } finally {
@@ -171,6 +187,9 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
     }
   };
 
+  const cities = locations.filter(l => l.type === 'city');
+  const neighborhoods = locations.filter(l => l.type === 'neighborhood');
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl w-full max-w-2xl my-6 shadow-2xl max-h-[95vh] overflow-hidden flex flex-col">
@@ -179,10 +198,7 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
           <h2 className="font-['Poppins'] text-xl font-bold text-[#1C1C1C]">
             {property ? 'Editar Imóvel' : 'Adicionar Novo Imóvel'}
           </h2>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full hover:bg-[#E0E8E7] flex items-center justify-center transition-colors"
-          >
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-[#E0E8E7] flex items-center justify-center transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -190,223 +206,176 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
         {/* Form - Scrollable */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-4">
-            {/* Title & Code */}
+            {/* Title & Type */}
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-2">
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Título do Imóvel *
-                </label>
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Título do Imóvel *</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
+                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none focus:border-[#00A896]"
                   required
                 />
               </div>
-
               <div>
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Código do Imóvel
-                </label>
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Tipo *</label>
+                <select
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none focus:border-[#00A896]"
+                  required
+                >
+                  <option>Casa</option>
+                  <option>Apartamento</option>
+                  <option>Cobertura</option>
+                  <option>Loft</option>
+                  <option>Chácara ou Sítio</option>
+                  <option>Terreno</option>
+                  <option>Sala comercial</option>
+                  <option>Salão Comercial</option>
+                  <option>Ponto Comercial</option>
+                  <option>Galpão</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Codes */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Código 1 (Ex: Venda)</label>
                 <input
                   type="text"
                   value={formData.code}
                   onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                   placeholder="Ex: REF-1234"
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
+                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none focus:border-[#00A896]"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Código 2 (Ex: Locação simultânea)</label>
+                <input
+                  type="text"
+                  value={formData.code2}
+                  onChange={(e) => setFormData({ ...formData, code2: e.target.value })}
+                  placeholder="Ex: LOC-5678"
+                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none focus:border-[#00A896]"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              {/* Type */}
+            {/* Price & Status */}
+            <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Tipo *
-                </label>
-                <select
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
-                  required
-                >
-                  <option>Apartamento</option>
-                  <option>Casa</option>
-                  <option>Cobertura</option>
-                  <option>Penthouse</option>
-                  <option>Loft</option>
-                  <option>Terreno</option>
-                  <option>Comercial</option>
-                </select>
-              </div>
-
-              {/* Status */}
-              <div>
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Finalidade *
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as 'Venda' | 'Locação' })}
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
-                  required
-                >
-                  <option>Venda</option>
-                  <option>Locação</option>
-                </select>
-              </div>
-
-              {/* Price */}
-              <div>
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Preço *
-                </label>
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Preço *</label>
                 <input
                   type="text"
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   placeholder="R$ 850.000"
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
+                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none focus:border-[#00A896]"
                   required
                 />
               </div>
-
-              {/* Price Detail */}
               <div>
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Detalhe do Preço
-                </label>
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Detalhe do Preço</label>
                 <input
                   type="text"
                   value={formData.priceDetail}
                   onChange={(e) => setFormData({ ...formData, priceDetail: e.target.value })}
                   placeholder="ou R$ 4.500/mês"
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
+                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none focus:border-[#00A896]"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Finalidade *</label>
+                <div className="flex flex-col gap-1 mt-2">
+                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                    <input type="checkbox" checked={statusVenda} onChange={e => setStatusVenda(e.target.checked)} className="rounded text-[#00A896]" />
+                    Venda
+                  </label>
+                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                    <input type="checkbox" checked={statusLocacao} onChange={e => setStatusLocacao(e.target.checked)} className="rounded text-[#00A896]" />
+                    Locação
+                  </label>
+                </div>
               </div>
             </div>
 
             {/* Location */}
-            <div>
-              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                Localização *
-              </label>
-              <input
-                type="text"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder="Bairro, Cidade - Estado"
-                className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
-                required
-              />
+            <div className="grid grid-cols-4 gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Estado</label>
+                <input
+                  type="text"
+                  value={formData.state}
+                  onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none focus:border-[#00A896]"
+                  required
+                />
+              </div>
+              <div className="col-span-1 md:col-span-2">
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Cidade *</label>
+                <select
+                  value={formData.city}
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none focus:border-[#00A896]"
+                  required
+                >
+                  <option value="">Selecione...</option>
+                  {cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                </select>
+              </div>
+              <div className="col-span-1 md:col-span-1">
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Bairro *</label>
+                <select
+                  value={formData.neighborhood}
+                  onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
+                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none focus:border-[#00A896]"
+                  required
+                >
+                  <option value="">Selecione...</option>
+                  {neighborhoods.map(n => <option key={n.id} value={n.name}>{n.name}</option>)}
+                </select>
+              </div>
             </div>
 
             <div className="grid grid-cols-4 gap-3">
-              {/* Bedrooms */}
               <div>
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Quartos *
-                </label>
-                <input
-                  type="number"
-                  value={formData.bedrooms}
-                  onChange={(e) => setFormData({ ...formData, bedrooms: parseInt(e.target.value) || 0 })}
-                  min="0"
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
-                  required
-                />
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Quartos *</label>
+                <input type="number" value={formData.bedrooms} onChange={(e) => setFormData({ ...formData, bedrooms: parseInt(e.target.value) || 0 })} min="0" className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none" required />
               </div>
-
-              {/* Bathrooms */}
               <div>
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Banheiros *
-                </label>
-                <input
-                  type="number"
-                  value={formData.bathrooms}
-                  onChange={(e) => setFormData({ ...formData, bathrooms: parseInt(e.target.value) || 0 })}
-                  min="0"
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
-                  required
-                />
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Banheiros *</label>
+                <input type="number" value={formData.bathrooms} onChange={(e) => setFormData({ ...formData, bathrooms: parseInt(e.target.value) || 0 })} min="0" className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none" required />
               </div>
-
-              {/* Area */}
               <div>
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Área (m²) *
-                </label>
-                <input
-                  type="number"
-                  value={formData.area}
-                  onChange={(e) => setFormData({ ...formData, area: parseInt(e.target.value) || 1 })}
-                  min="1"
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
-                  required
-                />
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Área (m²) *</label>
+                <input type="number" value={formData.area} onChange={(e) => setFormData({ ...formData, area: parseInt(e.target.value) || 1 })} min="1" className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none" required />
               </div>
-
-              {/* Parking */}
               <div>
-                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                  Vagas *
-                </label>
-                <input
-                  type="number"
-                  value={formData.parking}
-                  onChange={(e) => setFormData({ ...formData, parking: parseInt(e.target.value) || 0 })}
-                  min="0"
-                  className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
-                  required
-                />
+                <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Vagas *</label>
+                <input type="number" value={formData.parking} onChange={(e) => setFormData({ ...formData, parking: parseInt(e.target.value) || 0 })} min="0" className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none" required />
               </div>
             </div>
 
             {/* Badge */}
             <div>
-              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                Badge (opcional)
-              </label>
-              <input
-                type="text"
-                value={formData.badge}
-                onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                placeholder="Destaque, Lançamento, etc."
-                className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
-              />
+              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Badge / Tag (opcional) <span className="text-[#9A9690] font-normal">- Tag em destaque no card (Ex: "Lançamento", "Destaque")</span></label>
+              <input type="text" value={formData.badge} onChange={(e) => setFormData({ ...formData, badge: e.target.value })} className="w-full h-10 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none" />
             </div>
 
             {/* Main Image Upload */}
             <div>
-              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                Imagem Principal *
+              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Imagem Principal *</label>
+              <label className="w-full h-10 px-3 border-2 border-dashed border-[#00A896] rounded-lg hover:bg-[rgba(0,168,150,0.1)] cursor-pointer flex items-center justify-center gap-2 text-[#00A896] text-sm font-semibold">
+                <Upload size={16} /> Upload de Imagem
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
               </label>
-              <div className="flex gap-2">
-                <label className="flex-1 h-10 px-3 border-2 border-dashed border-[#00A896] rounded-lg bg-[rgba(0,168,150,0.05)] hover:bg-[rgba(0,168,150,0.1)] cursor-pointer transition-all flex items-center justify-center gap-2 text-[#00A896] text-sm font-semibold">
-                  <Upload size={16} />
-                  Upload de Imagem
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                </label>
-              </div>
               {formData.image && (
-                <div className="mt-2 relative group">
-                  <img
-                    src={formData.image}
-                    alt="Preview"
-                    className="w-full h-32 object-cover rounded-lg"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, image: '' })}
-                    className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
+                <div className="mt-2 relative group w-32">
+                  <img src={formData.image} alt="Preview" className="w-full h-24 object-cover rounded-lg" />
+                  <button type="button" onClick={() => setFormData({ ...formData, image: '' })} className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <X size={14} />
                   </button>
                 </div>
@@ -415,55 +384,28 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
 
             {/* Description */}
             <div>
-              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                Descrição *
-              </label>
+              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Descrição *</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={3}
-                className="w-full px-3 py-2 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all resize-none"
+                rows={6}
+                className="w-full px-3 py-2 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none resize-y"
                 required
               />
             </div>
 
             {/* Features */}
             <div>
-              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                Características
-              </label>
+              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Características</label>
               <div className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={newFeature}
-                  onChange={(e) => setNewFeature(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
-                  placeholder="Ex: Piscina, Academia..."
-                  className="flex-1 h-9 px-3 border-2 border-[#E0E8E7] rounded-lg bg-white text-[#1C1C1C] text-sm focus:border-[#00A896] focus:ring-2 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={addFeature}
-                  className="h-9 px-4 bg-[#00A896] text-white rounded-lg text-xs font-semibold hover:bg-[#028174] transition-colors flex items-center gap-1"
-                >
-                  <Plus size={14} />
-                  Add
-                </button>
+                <input type="text" value={newFeature} onChange={(e) => setNewFeature(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())} placeholder="Ex: Piscina..." className="flex-1 h-9 px-3 border-2 border-[#E0E8E7] rounded-lg text-sm outline-none" />
+                <button type="button" onClick={addFeature} className="h-9 px-4 bg-[#00A896] text-white rounded-lg text-xs font-semibold flex items-center gap-1"><Plus size={14} /> Add</button>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {features.map((feature, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-1.5 bg-[rgba(0,168,150,0.1)] text-[#028174] px-2.5 py-1 rounded-md"
-                  >
+                  <div key={index} className="flex items-center gap-1.5 bg-[rgba(0,168,150,0.1)] text-[#028174] px-2.5 py-1 rounded-md">
                     <span className="text-xs font-medium">{feature}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeFeature(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={12} />
-                    </button>
+                    <button type="button" onClick={() => removeFeature(index)} className="text-red-500"><Trash2 size={12} /></button>
                   </div>
                 ))}
               </div>
@@ -471,34 +413,17 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
 
             {/* Gallery Upload */}
             <div>
-              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">
-                Galeria de Imagens
-              </label>
-              <label className="w-full h-10 px-3 border-2 border-dashed border-[#E0E8E7] rounded-lg hover:border-[#00A896] hover:bg-[rgba(0,168,150,0.05)] cursor-pointer transition-all flex items-center justify-center gap-2 text-[#5A5754] text-sm">
-                <ImageIcon size={16} />
-                Adicionar Imagens (múltiplas)
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleGalleryUpload}
-                  className="hidden"
-                />
+              <label className="block text-xs font-semibold text-[#2C2C2C] mb-1.5">Galeria de Imagens</label>
+              <label className="w-full h-10 px-3 border-2 border-dashed border-[#E0E8E7] rounded-lg hover:border-[#00A896] cursor-pointer flex items-center justify-center gap-2 text-[#5A5754] text-sm">
+                <ImageIcon size={16} /> Adicionar Imagens (múltiplas)
+                <input type="file" accept="image/*" multiple onChange={handleGalleryUpload} className="hidden" />
               </label>
               {gallery.length > 0 && (
-                <div className="grid grid-cols-4 gap-2 mt-2">
+                <div className="grid grid-cols-4 md:grid-cols-6 gap-2 mt-2">
                   {gallery.map((url, index) => (
                     <div key={index} className="relative group">
-                      <img
-                        src={url}
-                        alt={`Gallery ${index + 1}`}
-                        className="w-full h-20 object-cover rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeGalleryImage(index)}
-                        className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
+                      <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-16 object-cover rounded-lg" />
+                      <button type="button" onClick={() => removeGalleryImage(index)} className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <Trash2 size={12} />
                       </button>
                     </div>
@@ -507,29 +432,12 @@ export function PropertyForm({ property, onClose }: PropertyFormProps) {
               )}
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className="p-3 bg-red-50 border-2 border-red-200 rounded-lg">
-                <p className="text-red-600 text-sm font-semibold">{error}</p>
-              </div>
-            )}
+            {error && <div className="p-3 bg-red-50 border-2 border-red-200 rounded-lg"><p className="text-red-600 text-sm font-semibold">{error}</p></div>}
           </div>
 
-          {/* Actions - Fixed at Bottom */}
           <div className="flex gap-3 px-6 py-4 border-t-2 border-[#E0E8E7] bg-white flex-shrink-0">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={loading}
-              className="flex-1 h-11 border-2 border-[#E0E8E7] text-[#5A5754] rounded-lg text-sm font-semibold hover:bg-[#E0E8E7] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 h-11 bg-gradient-to-br from-[#00A896] to-[#028174] text-white rounded-lg text-sm font-semibold hover:shadow-[0_8px_28px_rgba(0,168,150,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <button type="button" onClick={onClose} disabled={loading} className="flex-1 h-11 border-2 border-[#E0E8E7] text-[#5A5754] rounded-lg text-sm font-semibold hover:bg-[#E0E8E7] transition-colors disabled:opacity-50">Cancelar</button>
+            <button type="submit" disabled={loading} className="flex-1 h-11 bg-gradient-to-br from-[#00A896] to-[#028174] text-white rounded-lg text-sm font-semibold hover:shadow-lg transition-all disabled:opacity-50">
               {loading ? 'Salvando...' : (property ? 'Salvar' : 'Adicionar')}
             </button>
           </div>

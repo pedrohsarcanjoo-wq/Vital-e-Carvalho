@@ -9,7 +9,7 @@ const differentials = [
   {
     icon: Shield,
     title: 'Segurança Total',
-    description: 'Processos transparentes e assessoria jurídica completa em todas as etapas da compra.',
+    description: 'Processos transparentes com suporte especializado e indicação de assessoria contábil parceira para a sua tranquilidade.',
   },
   {
     icon: Heart,

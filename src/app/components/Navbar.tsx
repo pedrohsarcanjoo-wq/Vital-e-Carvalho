@@ -27,6 +27,9 @@ export function Navbar() {
             <a href="#depoimentos" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
               Depoimentos
             </a>
+            <a href="/blog" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
+              Blog
+            </a>
             <a 
               href="https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig"
               target="_blank"
@@ -62,6 +65,9 @@ export function Navbar() {
               </a>
               <a href="#depoimentos" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
                 Depoimentos
+              </a>
+              <a href="/blog" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
+                Blog
               </a>
               <a href="https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig"
                 target="_blank"

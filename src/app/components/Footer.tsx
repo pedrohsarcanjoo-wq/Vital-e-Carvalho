@@ -12,7 +12,7 @@ export function Footer() {
           <div>
             <img src={logoFooter} alt="Vita & Carvalho" className="h-14 w-auto mb-6" />
             <p className="text-[rgba(255,255,255,0.6)] text-sm leading-relaxed mb-6 font-light">
-              Excelência em soluções imobiliárias há mais de 15 anos. Transformando sonhos em realidade.
+              Atendimento focado e soluções imobiliárias de excelência. Transformando sonhos em realidade.
             </p>
             <div className="flex gap-3">
               <a

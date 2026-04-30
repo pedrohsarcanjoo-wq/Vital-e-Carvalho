@@ -12,6 +12,8 @@ interface PropertyCardProps {
   parking: number;
   image: string;
   badge?: string;
+  code?: string;
+  code2?: string;
 }
 
 export function PropertyCard({
@@ -25,6 +27,8 @@ export function PropertyCard({
   parking,
   image,
   badge,
+  code,
+  code2,
 }: PropertyCardProps) {
   return (
     <Link to={`/imovel/${id}`} className="block h-full">
@@ -49,12 +53,20 @@ export function PropertyCard({
         {/* Content */}
         <div className="p-7 flex-1 flex flex-col">
           {/* Price */}
-          <div className="mb-3">
-            <div className="font-['Poppins'] text-3xl font-bold text-[#1C1C1C] group-hover:text-[#00A896] transition-colors">
-              {price}
+          <div className="mb-3 flex justify-between items-start">
+            <div>
+              <div className="font-['Poppins'] text-3xl font-bold text-[#1C1C1C] group-hover:text-[#00A896] transition-colors">
+                {price}
+              </div>
+              {priceDetail && (
+                <div className="text-sm text-[#9A9690] font-light">{priceDetail}</div>
+              )}
             </div>
-            {priceDetail && (
-              <div className="text-sm text-[#9A9690] font-light">{priceDetail}</div>
+            {(code || code2) && (
+              <div className="text-xs font-semibold text-[#00A896] bg-[rgba(0,168,150,0.1)] px-2 py-1 rounded-md text-right">
+                {code && <div>REF: {code}</div>}
+                {code2 && <div>REF 2: {code2}</div>}
+              </div>
             )}
           </div>
 

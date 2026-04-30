@@ -6,37 +6,37 @@ export function Services() {
       icon: Home,
       title: 'Compra de Imóveis',
       description: 'Encontre o imóvel perfeito com nossa assessoria completa, desde a busca até a assinatura do contrato.',
-      features: ['Análise de documentação', 'Visitas guiadas', 'Negociação de valores']
+      features: ['Busca direcionada', 'Visitas acompanhadas', 'Apoio na negociação']
     },
     {
       icon: Key,
       title: 'Venda de Imóveis',
-      description: 'Maximize o valor do seu imóvel com estratégias de marketing profissional e captação qualificada.',
-      features: ['Avaliação gratuita', 'Fotografia profissional', 'Divulgação multiplataforma']
+      description: 'Pesquisa de valores da região para apoio na definição do preço de divulgação, com exclusividade na venda.',
+      features: ['Análise de mercado', 'Marketing profissional', 'Visitas guiadas']
     },
     {
       icon: TrendingUp,
       title: 'Investimentos',
-      description: 'Consultoria especializada para investidores que buscam rentabilidade e valorização patrimonial.',
-      features: ['Análise de mercado', 'Projeção de ROI', 'Portfólio diversificado']
+      description: 'Orientamos sobre as opções: imóvel pronto, na planta ou consórcio (via parceiro especializado).',
+      features: ['Análise de perfil', 'Imóveis na planta', 'Consórcios parceiros']
     },
     {
       icon: FileText,
       title: 'Locação',
-      description: 'Gestão completa de locação com contratos seguros e administração eficiente.',
-      features: ['Contratos jurídicos', 'Vistoria técnica', 'Gestão de inadimplência']
+      description: 'Gestão ágil da locação contemplando a busca do imóvel, visitas, elaboração do contrato e vistoria de entrada.',
+      features: ['Contratos seguros', 'Vistoria de entrada', 'Acompanhamento ágil']
     },
     {
       icon: Calculator,
-      title: 'Financiamento',
-      description: 'Simulação e aprovação de financiamento com as melhores taxas do mercado.',
-      features: ['Múltiplos bancos', 'Taxas competitivas', 'Aprovação rápida']
+      title: 'Administração de Imóveis',
+      description: 'Cuidamos do seu patrimônio com vistorias (entrada e saída) e gestão de inadimplência (cobranças).',
+      features: ['Gestão de repasses', 'Vistoria de saída', 'Cobrança ativa']
     },
     {
       icon: Users,
-      title: 'Consultoria',
-      description: 'Assessoria personalizada para decisões estratégicas no mercado imobiliário.',
-      features: ['Análise de viabilidade', 'Due diligence', 'Planejamento patrimonial']
+      title: 'Trabalho Avulso / Consultoria',
+      description: 'Regularização de imóvel, orientação documental e suporte em processos de compra/venda pontuais.',
+      features: ['Regularização', 'Suporte documental', 'Consultoria avulsa']
     }
   ];
 

@@ -13,7 +13,7 @@ export function Process() {
       number: '02',
       icon: ClipboardCheck,
       title: 'Análise e Vistoria',
-      description: 'Nossa equipe realiza análise completa de documentação e vistoria técnica detalhada do imóvel.',
+      description: 'Após a visita e aceitação da proposta pelo proprietário, nossa equipe realiza análise da documentação e vistoria técnica.',
       highlight: 'Segurança garantida'
     },
     {
@@ -27,8 +27,8 @@ export function Process() {
       number: '04',
       icon: Key,
       title: 'Concretização',
-      description: 'Acompanhamento jurídico completo até a entrega das chaves e pós-venda exclusivo.',
-      highlight: 'Suporte vitalício'
+      description: 'Acompanhamento detalhado e seguro até a entrega das chaves, com foco na tranquilidade de ambas as partes.',
+      highlight: 'Processo seguro'
     }
   ];
 

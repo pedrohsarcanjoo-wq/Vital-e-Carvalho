@@ -16,6 +16,8 @@ const supabasePublic = createClient(supabaseUrl, supabaseAnonKey);
 
 const BUCKET_NAME = 'make-9a04a9a2-property-images';
 const PROPERTY_PREFIX = 'property:';
+const LOCATION_PREFIX = 'location:';
+const POST_PREFIX = 'post:';
 const CACHE_TTL_MS = 30000; // 30 segundos
 const DB_TIMEOUT_MS = 30000; // 30 segundos de timeout
 
@@ -321,6 +323,112 @@ app.delete("/make-server-9a04a9a2/properties/:id", async (c) => {
     
     console.log('✅ [DELETE /properties/:id] Deletado:', id);
     return c.json({ success: true, message: 'Property deleted successfully' });
+  } catch (error) {
+    return handleHttpError(c, error);
+  }
+});
+
+/**
+ * GET /locations - Lista categorias de locais
+ */
+app.get("/make-server-9a04a9a2/locations", async (c) => {
+  try {
+    const locations = await kv.getByPrefix(LOCATION_PREFIX);
+    return c.json({ locations, count: locations.length });
+  } catch (error) {
+    return c.json({ error: 'Failed to load locations' }, 500);
+  }
+});
+
+/**
+ * POST /locations - Adiciona categoria de local
+ */
+app.post("/make-server-9a04a9a2/locations", async (c) => {
+  try {
+    const userId = await getUserOrThrow(c);
+    const body = await c.req.json();
+    const id = crypto.randomUUID();
+    const newLocation = { id, ...body, createdAt: new Date().toISOString(), createdBy: userId };
+    await kv.set(`${LOCATION_PREFIX}${id}`, newLocation);
+    return c.json({ location: newLocation, success: true }, 201);
+  } catch (error) {
+    return handleHttpError(c, error);
+  }
+});
+
+/**
+ * DELETE /locations/:id - Deleta categoria de local
+ */
+app.delete("/make-server-9a04a9a2/locations/:id", async (c) => {
+  try {
+    const userId = await getUserOrThrow(c);
+    const id = c.req.param('id');
+    await kv.del(`${LOCATION_PREFIX}${id}`);
+    return c.json({ success: true, message: 'Location deleted successfully' });
+  } catch (error) {
+    return handleHttpError(c, error);
+  }
+});
+
+/**
+ * ROUTES: POSTS (BLOG)
+ */
+app.get("/make-server-9a04a9a2/posts", async (c) => {
+  try {
+    const posts = await kv.getByPrefix(POST_PREFIX);
+    posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return c.json({ posts, count: posts.length });
+  } catch (error) {
+    return c.json({ error: 'Failed to load posts' }, 500);
+  }
+});
+
+app.get("/make-server-9a04a9a2/posts/:id", async (c) => {
+  try {
+    const id = c.req.param('id');
+    const post = await kv.get(`${POST_PREFIX}${id}`);
+    if (!post) return c.json({ error: 'Post not found' }, 404);
+    return c.json({ post });
+  } catch (error) {
+    return c.json({ error: 'Failed to load post' }, 500);
+  }
+});
+
+app.post("/make-server-9a04a9a2/posts", async (c) => {
+  try {
+    const userId = await getUserOrThrow(c);
+    const body = await c.req.json();
+    const id = crypto.randomUUID();
+    const newPost = { id, ...body, createdAt: new Date().toISOString(), createdBy: userId };
+    await kv.set(`${POST_PREFIX}${id}`, newPost);
+    return c.json({ post: newPost, success: true }, 201);
+  } catch (error) {
+    return handleHttpError(c, error);
+  }
+});
+
+app.put("/make-server-9a04a9a2/posts/:id", async (c) => {
+  try {
+    const userId = await getUserOrThrow(c);
+    const id = c.req.param('id');
+    const existingPost = await kv.get(`${POST_PREFIX}${id}`);
+    if (!existingPost) return c.json({ error: 'Post not found' }, 404);
+    
+    const body = await c.req.json();
+    const updatedPost = { ...existingPost, ...body, id, updatedAt: new Date().toISOString(), updatedBy: userId };
+    await kv.set(`${POST_PREFIX}${id}`, updatedPost);
+    return c.json({ post: updatedPost, success: true });
+  } catch (error) {
+    return handleHttpError(c, error);
+  }
+});
+
+app.delete("/make-server-9a04a9a2/posts/:id", async (c) => {
+  try {
+    const userId = await getUserOrThrow(c);
+    const id = c.req.param('id');
+    await kv.del(`${POST_PREFIX}${id}`);
+    return c.json({ success: true, message: 'Post deleted successfully' });
   } catch (error) {
     return handleHttpError(c, error);
   }

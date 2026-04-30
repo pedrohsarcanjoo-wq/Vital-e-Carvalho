@@ -1,9 +1,9 @@
 export function Stats() {
   const stats = [
-    { number: '2.400+', label: 'Imóveis Cadastrados' },
-    { number: '5.200+', label: 'Clientes Satisfeitos' },
-    { number: '15', label: 'Anos de Experiência' },
-    { number: '12', label: 'Cidades Atendidas' },
+    { number: '200+', label: 'Imóveis Cadastrados' },
+    { number: '500+', label: 'Clientes Satisfeitos' },
+    { number: '10+', label: 'Cidades Atendidas' },
+    { number: '100%', label: 'Foco e Transparência' },
   ];
 
   return (

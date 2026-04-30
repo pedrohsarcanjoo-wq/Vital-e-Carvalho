@@ -10,14 +10,20 @@ export function Hero() {
   const [searchFilters, setSearchFilters] = useState({
     status: 'Todos',
     type: 'Todos',
-    city: 'Todas as Regiões',
-    price: 'Todos'
+    city: 'Todas',
+    neighborhood: 'Todos',
+    minPrice: '',
+    maxPrice: ''
   });
 
   const uniqueCities = useMemo(() => {
     if (!properties) return [];
-    const cities = new Set(properties.map(p => p.location));
-    return Array.from(cities).sort();
+    return Array.from(new Set(properties.map(p => p.city || (p.location ? p.location.split(',')[0].split('-')[0].trim() : '')).filter(Boolean))).sort();
+  }, [properties]);
+
+  const uniqueNeighborhoods = useMemo(() => {
+    if (!properties) return [];
+    return Array.from(new Set(properties.map(p => p.neighborhood || (p.location ? p.location.split(',')[0].trim() : '')).filter(Boolean))).sort();
   }, [properties]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -25,8 +31,10 @@ export function Hero() {
     const params = new URLSearchParams();
     if (searchFilters.status !== 'Todos') params.append('status', searchFilters.status);
     if (searchFilters.type !== 'Todos') params.append('type', searchFilters.type);
-    if (searchFilters.city !== 'Todas as Regiões') params.append('city', searchFilters.city);
-    if (searchFilters.price !== 'Todos') params.append('price', searchFilters.price);
+    if (searchFilters.city !== 'Todas') params.append('city', searchFilters.city);
+    if (searchFilters.neighborhood !== 'Todos') params.append('neighborhood', searchFilters.neighborhood);
+    if (searchFilters.minPrice) params.append('minPrice', searchFilters.minPrice);
+    if (searchFilters.maxPrice) params.append('maxPrice', searchFilters.maxPrice);
     
     navigate(`/imoveis?${params.toString()}`);
   };
@@ -137,44 +145,71 @@ export function Hero() {
                       className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
                     >
                       <option value="Todos">Todos</option>
-                      <option value="Apartamento">Apartamento</option>
                       <option value="Casa">Casa</option>
+                      <option value="Apartamento">Apartamento</option>
                       <option value="Cobertura">Cobertura</option>
                       <option value="Loft">Loft</option>
+                      <option value="Chácara ou Sítio">Chácara ou Sítio</option>
                       <option value="Terreno">Terreno</option>
-                      <option value="Comercial">Comercial</option>
+                      <option value="Sala comercial">Sala comercial</option>
+                      <option value="Salão Comercial">Salão Comercial</option>
+                      <option value="Ponto Comercial">Ponto Comercial</option>
+                      <option value="Galpão">Galpão</option>
                     </select>
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Região</label>
-                  <select 
-                    value={searchFilters.city}
-                    onChange={(e) => setSearchFilters({...searchFilters, city: e.target.value})}
-                    className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
-                  >
-                    <option value="Todas as Regiões">Todas as Regiões</option>
-                    {uniqueCities.map((city, idx) => (
-                      <option key={idx} value={city}>{city}</option>
-                    ))}
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Cidade</label>
+                    <select 
+                      value={searchFilters.city}
+                      onChange={(e) => setSearchFilters({...searchFilters, city: e.target.value})}
+                      className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
+                    >
+                      <option value="Todas">Todas</option>
+                      {uniqueCities.map((city, idx) => (
+                        <option key={idx} value={city}>{city}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Bairro</label>
+                    <select 
+                      value={searchFilters.neighborhood}
+                      onChange={(e) => setSearchFilters({...searchFilters, neighborhood: e.target.value})}
+                      className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
+                    >
+                      <option value="Todos">Todos</option>
+                      {uniqueNeighborhoods.map((n, idx) => (
+                        <option key={idx} value={n}>{n}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Faixa de Preço</label>
-                  <select 
-                    value={searchFilters.price}
-                    onChange={(e) => setSearchFilters({...searchFilters, price: e.target.value})}
-                    className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
-                  >
-                    <option value="Todos">Qualquer Valor</option>
-                    <option value="Até R$ 300.000">Até R$ 300.000</option>
-                    <option value="R$ 300.000 - R$ 500.000">R$ 300.000 - R$ 500.000</option>
-                    <option value="R$ 500.000 - R$ 800.000">R$ 500.000 - R$ 800.000</option>
-                    <option value="R$ 800.000 - R$ 1.200.000">R$ 800.000 - R$ 1.200.000</option>
-                    <option value="Acima de R$ 1.200.000">Acima de R$ 1.200.000</option>
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Valor Mín (R$)</label>
+                    <input 
+                      type="text"
+                      placeholder="Ex: 100.000"
+                      value={searchFilters.minPrice}
+                      onChange={(e) => setSearchFilters({...searchFilters, minPrice: e.target.value})}
+                      className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-[#2C2C2C] mb-2">Valor Máx (R$)</label>
+                    <input 
+                      type="text"
+                      placeholder="Ex: 500.000"
+                      value={searchFilters.maxPrice}
+                      onChange={(e) => setSearchFilters({...searchFilters, maxPrice: e.target.value})}
+                      className="w-full h-12 px-4 border-2 border-[#E0E8E7] rounded-xl bg-white text-sm text-[#1C1C1C] focus:border-[#00A896] focus:ring-4 focus:ring-[rgba(0,168,150,0.12)] outline-none transition-all font-medium"
+                    />
+                  </div>
                 </div>
 
                 <button 
