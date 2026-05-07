@@ -31,9 +31,15 @@ export function LocationManager() {
       await addLocation({ name: name.trim(), type });
       setName('');
       fetchLocations();
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Erro ao adicionar.');
+      let errorMessage = e.message || 'Erro desconhecido ao salvar local';
+      if (errorMessage.includes('Unauthorized') || errorMessage.includes('FORBIDDEN') || errorMessage.includes('401')) {
+        errorMessage = 'Sessão expirada ou inválida. Por favor, faça login novamente.';
+      } else if (errorMessage.includes('404')) {
+        errorMessage = 'Função não encontrada no servidor (404). O backend pode não estar atualizado.';
+      }
+      alert('Erro ao adicionar: ' + errorMessage);
     }
   };
 
@@ -42,9 +48,9 @@ export function LocationManager() {
     try {
       await deleteLocation(id);
       fetchLocations();
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Erro ao excluir.');
+      alert('Erro ao excluir: ' + (e.message || 'Erro desconhecido'));
     }
   };
 

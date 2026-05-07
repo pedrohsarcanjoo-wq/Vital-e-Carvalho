@@ -1,35 +1,45 @@
-import { Menu, Phone, X } from 'lucide-react';
+import { Menu, Phone, X, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router';
 import logo from '../../assets/logo-navbar.png';
+
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b-2 border-[#E0E8E7] shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="flex items-center justify-between h-24">
           {/* Logo */}
-           <div className="flex items-center">
+          <Link to="/" className="flex items-center">
             <img src={logo} alt="Vita & Carvalho" className="h-20 w-auto" />
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#imoveis" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
+            {!isHome && (
+              <Link to="/" className="flex items-center gap-2 text-sm font-semibold text-[#00A896] hover:text-[#028174] transition-colors px-4 py-2">
+                <ArrowLeft size={16} />
+                Voltar para o site
+              </Link>
+            )}
+            <a href="/#imoveis" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
               Imóveis
             </a>
-            <a href="#sobre" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
+            <a href="/#sobre" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
               Sobre Nós
             </a>
-            <a href="#diferenciais" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
+            <a href="/#diferenciais" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
               Diferenciais
             </a>
-            <a href="#depoimentos" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
+            <a href="/#depoimentos" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
               Depoimentos
             </a>
-            <a href="/blog" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
+            <Link to="/blog" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors px-4 py-2">
               Blog
-            </a>
+            </Link>
             <a 
               href="https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig"
               target="_blank"
@@ -54,21 +64,27 @@ export function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t-2 border-[#E0E8E7]">
             <div className="flex flex-col gap-3">
-              <a href="#imoveis" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
+              {!isHome && (
+                <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-sm font-semibold text-[#00A896] hover:text-[#028174] transition-colors py-2">
+                  <ArrowLeft size={16} />
+                  Voltar para o site
+                </Link>
+              )}
+              <a href="/#imoveis" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
                 Imóveis
               </a>
-              <a href="#sobre" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
+              <a href="/#sobre" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
                 Sobre Nós
               </a>
-              <a href="#diferenciais" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
+              <a href="/#diferenciais" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
                 Diferenciais
               </a>
-              <a href="#depoimentos" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
+              <a href="/#depoimentos" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
                 Depoimentos
               </a>
-              <a href="/blog" className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
+              <Link to="/blog" onClick={() => setMobileMenuOpen(false)} className="text-sm font-semibold text-[#5A5754] hover:text-[#00A896] transition-colors py-2">
                 Blog
-              </a>
+              </Link>
               <a href="https://api.whatsapp.com/send/?phone=5511941286418&text&type=phone_number&app_absent=0&utm_source=ig"
                 target="_blank"
                 rel="noopener noreferrer"

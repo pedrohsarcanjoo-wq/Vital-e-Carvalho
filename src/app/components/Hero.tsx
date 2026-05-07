@@ -81,30 +81,7 @@ export function Hero() {
               Mais de 15 anos conectando pessoas aos melhores imóveis com excelência, confiança e resultados que transformam vidas.
             </p>
 
-            {/* Trust Badges */}
-            <div className="flex flex-wrap gap-8 mb-12">
-              <div className="flex items-center gap-3 group cursor-default">
-                <div className="w-1.5 h-16 bg-gradient-to-b from-[#00A896] to-[#028174] rounded-full group-hover:h-20 transition-all"></div>
-                <div>
-                  <div className="text-3xl font-bold text-[#1C1C1C] font-['Poppins'] mb-0.5">2.400+</div>
-                  <div className="text-xs text-[#9A9690] uppercase tracking-wider font-semibold">Imóveis</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 group cursor-default">
-                <div className="w-1.5 h-16 bg-gradient-to-b from-[#00A896] to-[#028174] rounded-full group-hover:h-20 transition-all"></div>
-                <div>
-                  <div className="text-3xl font-bold text-[#1C1C1C] font-['Poppins'] mb-0.5">15+</div>
-                  <div className="text-xs text-[#9A9690] uppercase tracking-wider font-semibold">Anos</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 group cursor-default">
-                <div className="w-1.5 h-16 bg-gradient-to-b from-[#00A896] to-[#028174] rounded-full group-hover:h-20 transition-all"></div>
-                <div>
-                  <div className="text-3xl font-bold text-[#1C1C1C] font-['Poppins'] mb-0.5">5.200+</div>
-                  <div className="text-xs text-[#9A9690] uppercase tracking-wider font-semibold">Clientes</div>
-                </div>
-              </div>
-            </div>
+
           </div>
 
           {/* Right - Search Card */}
