@@ -71,8 +71,8 @@ export default function AllProperties() {
   // Extract unique options from properties
   const allTypes = useMemo(() => Array.from(new Set(properties.map(p => p.type).filter(Boolean))), [properties]);
   const allStatuses = useMemo(() => Array.from(new Set(properties.flatMap(p => Array.isArray(p.status) ? p.status : [p.status]).filter(Boolean))), [properties]);
-  const allCities = useMemo(() => Array.from(new Set(properties.map(p => p.city || (p.location ? p.location.split(',')[0].split('-')[0].trim() : '')).filter(Boolean))), [properties]);
-  const allNeighborhoods = useMemo(() => Array.from(new Set(properties.map(p => p.neighborhood || (p.location ? p.location.split(',')[0].trim() : '')).filter(Boolean))), [properties]);
+  const allCities = useMemo(() => Array.from(new Set(properties.map(p => p.city).filter(Boolean) as string[])).sort(), [properties]);
+  const allNeighborhoods = useMemo(() => Array.from(new Set(properties.map(p => p.neighborhood).filter(Boolean) as string[])).sort(), [properties]);
 
   const filteredProperties = useMemo(() => {
     return properties.filter((property) => {
@@ -96,12 +96,10 @@ export default function AllProperties() {
       const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.some(s => propStatuses.includes(s));
 
       // 5. City filter
-      const propCity = property.city || property.location;
-      const matchesCity = selectedCities.length === 0 || selectedCities.some(c => propCity.includes(c));
+      const matchesCity = selectedCities.length === 0 || (!!property.city && selectedCities.includes(property.city));
 
       // 6. Neighborhood filter
-      const propNeighborhood = property.neighborhood || property.location;
-      const matchesNeighborhood = selectedNeighborhoods.length === 0 || selectedNeighborhoods.some(n => propNeighborhood.includes(n));
+      const matchesNeighborhood = selectedNeighborhoods.length === 0 || (!!property.neighborhood && selectedNeighborhoods.includes(property.neighborhood));
 
       // 7. Price filter
       const priceNum = parseInt(property.price.replace(/\D/g, '')) || 0;
