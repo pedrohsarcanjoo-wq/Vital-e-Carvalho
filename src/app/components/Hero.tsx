@@ -65,7 +65,7 @@ export function Hero() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-[rgba(0,168,150,0.08)] border border-[rgba(0,168,150,0.2)] text-[#028174] px-5 py-2 rounded-full mb-8 hover:bg-[rgba(0,168,150,0.12)] transition-colors">
               <div className="w-2 h-2 rounded-full bg-[#00A896] animate-pulse"></div>
-              <span className="text-xs font-bold tracking-[0.15em] uppercase">Excelência Imobiliária desde 2009</span>
+              <span className="text-xs font-bold tracking-[0.15em] uppercase">O Seu Próximo Passo Começa Aqui</span>
             </div>
 
             {/* Main Headline */}
@@ -78,7 +78,7 @@ export function Hero() {
 
             {/* Subtitle */}
             <p className="text-xl text-[#5A5754] leading-relaxed mb-10 max-w-xl font-light">
-              Mais de 15 anos conectando pessoas aos melhores imóveis com excelência, confiança e resultados que transformam vidas.
+              Especialistas em encontrar as melhores oportunidades de mercado, conectando você ao imóvel ideal com total segurança e transparência.
             </p>
 
 
